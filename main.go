@@ -28,7 +28,8 @@ func NewTorBrowserSimulator(relays []*TorRelay) *TorBrowserSimulator {
 // sendRequestThroughRelay sends an HTTP request through a Tor relay.
 func (tbs *TorBrowserSimulator) sendRequestThroughRelay(relay *TorRelay, targetURL string) ([]byte, error) {
 	// Configure a proxy URL to use the Tor relay.
-	proxyURL, err := url.Parse("http://" + relay.Address)
+	proxyURL, err := url.Parse("socks5://localhost:9050")
+
 	if err != nil {
 		return nil, err
 	}
@@ -41,11 +42,14 @@ func (tbs *TorBrowserSimulator) sendRequestThroughRelay(relay *TorRelay, targetU
 		Timeout: time.Second * 10,
 	}
 
-	// Send an HTTP GET request through the Tor relay.
+	fmt.Println("Sending request through Tor relay...")
 	resp, err := client.Get(targetURL)
 	if err != nil {
+		fmt.Println("Error connecting to Tor relay:", err)
 		return nil, err
 	}
+	fmt.Println("Request successful.")
+
 	defer resp.Body.Close()
 
 	// Read the response body.
@@ -67,7 +71,7 @@ func main() {
 	tbs := NewTorBrowserSimulator(relays)
 
 	// Specify the target URL.
-	targetURL := "https://www.nasa.gov/"
+	targetURL := "https://www.google.com/"
 
 	// Simulate sending a request through a random Tor relay.
 	selectedRelay := relays[0] // You can implement logic to select a random relay.
