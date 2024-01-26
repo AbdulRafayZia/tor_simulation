@@ -28,7 +28,9 @@ func NewTorBrowserSimulator(relays []*TorRelay) *TorBrowserSimulator {
 // sendRequestThroughRelay sends an HTTP request through a Tor relay.
 func (tbs *TorBrowserSimulator) sendRequestThroughRelay(relay *TorRelay, targetURL string) ([]byte, error) {
 	// Configure a proxy URL to use the Tor relay.
-	proxyURL, err := url.Parse("socks5://localhost:9050")
+	// proxyURL, err := url.Parse("socks5://localhost:9050")
+	proxyURL, err := url.Parse(relay.Address)
+	
 
 	if err != nil {
 		return nil, err
@@ -63,9 +65,9 @@ func (tbs *TorBrowserSimulator) sendRequestThroughRelay(relay *TorRelay, targetU
 
 func main() {
 	// Set up Tor relays.
-	relay1 := &TorRelay{Address: "localhost:9001"}
-	relay2 := &TorRelay{Address: "localhost:9002"}
-	relays := []*TorRelay{relay1, relay2}
+	relay1 := &TorRelay{Address: "socks5://localhost:9050"}
+	// relay2 := &TorRelay{Address: "localhost:9002"}
+	relays := []*TorRelay{relay1}
 
 	// Create Tor Browser Simulator.
 	tbs := NewTorBrowserSimulator(relays)
